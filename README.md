@@ -3,6 +3,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 ## Demo
 
 ![Demo](demo.gif "Demo app")
+
 [Demo ref](https://reactjs.org/docs/thinking-in-react.html)
 
 
