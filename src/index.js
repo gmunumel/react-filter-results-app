@@ -92,7 +92,8 @@ class ProductTable extends React.Component {
       if(category !== elem.category) {
         rows.push(<ProductCategoryRow key={elem.category} category={elem.category} />)
       } 
-      if ((this.props.isStockOn && elem.stocked) || !this.props.isStockOn) {
+      if (((this.props.isStockOn && elem.stocked) || !this.props.isStockOn)
+        && elem.name.includes(this.props.search)) {
         rows.push(<ProductRow key={elem.name} product={elem} />)
       }
       
@@ -117,19 +118,24 @@ class SearchBar extends React.Component {
   constructor(props) {
     super(props)
 
-    this.handleClick = this.handleClick.bind(this);
+    this.handleStockClick = this.handleStockClick.bind(this);
+    this.handleSearchChange = this.handleSearchChange.bind(this);
   }
 
-  handleClick() {
+  handleStockClick() {
     this.props.onStockClick();
+  }
+
+  handleSearchChange(e) {
+    this.props.onSearchChange(e.target.value);
   }
 
   render () {
     return (
       <form>
-        <input type="text" placeholder="Search..." />
+        <input type="text" placeholder="Search..." onChange={this.handleSearchChange} />
         <br />
-        <input type="checkbox" name="stock" onClick={this.handleClick} />
+        <input type="checkbox" name="stock" onClick={this.handleStockClick} />
         <label>Only show products in stock</label>
         <br /><br />
       </form>
@@ -140,9 +146,10 @@ class SearchBar extends React.Component {
 class FilterableProductTable extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {isStockOn: false}
+    this.state = {isStockOn: false, search: ''}
 
     this.handleStockClick = this.handleStockClick.bind(this);
+    this.handleSearchChange = this.handleSearchChange.bind(this);
   }
 
   handleStockClick() {
@@ -151,11 +158,23 @@ class FilterableProductTable extends React.Component {
     }))
   }
 
+  handleSearchChange(value) {
+    if(value.length > 0 && value !== this.state.search) {
+      this.setState(state => ({
+        search: value
+      }))
+    }
+  }
+
   render () {
     return (
       <div>
-          <SearchBar onStockClick={this.handleStockClick} />
-          <ProductTable products={this.props.products} isStockOn={this.state.isStockOn} />
+          <SearchBar onStockClick={this.handleStockClick} onSearchChange={this.handleSearchChange} />
+          <ProductTable 
+            products={this.props.products} 
+            isStockOn={this.state.isStockOn} 
+            search={this.state.search} 
+          />
       </div>
     )
   }
